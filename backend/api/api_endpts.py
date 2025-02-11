@@ -8,8 +8,13 @@ sales_bp = Blueprint('sales', __name__)
 stock_manager = StockManager()
 sales_manager = SalesManager()
 
+""" 
+    ALL THESE API ENDPOINTS DONT REQUIRE BASE URL ------- THEY JUST REQUIRE PARAMETERS ,i.e ID
+    BASE URL IS DEFINED IN main.py
+    """
+
 # Create Stock Item
-@stock_bp.route('/api/stock', methods=['POST'])
+@stock_bp.route('/', methods=['POST'])
 def create_stock():
     try:
         data = request.get_json()
@@ -26,7 +31,7 @@ def create_stock():
         return jsonify({'error': str(e)}), 500
 
 # Get All Stock Items
-@stock_bp.route('/api/stock', methods=['GET'])
+@stock_bp.route('/', methods=['GET'])
 def get_all_stock():
     try:
         result = stock_manager.get_all_stock()
@@ -38,7 +43,7 @@ def get_all_stock():
         return jsonify({'error': str(e)}), 500
 
 # Get Stock Item by ID
-@stock_bp.route('/api/stock/<item_id>', methods=['GET'])
+@stock_bp.route('/<item_id>', methods=['GET'])
 def get_stock_by_id(item_id):
     try:
         result = stock_manager.get_stock_by_id(item_id)
@@ -52,7 +57,7 @@ def get_stock_by_id(item_id):
         return jsonify({'error': str(e)}), 500
 
 # Update Stock Item
-@stock_bp.route('/api/stock/<item_id>', methods=['PUT'])
+@stock_bp.route('/<item_id>', methods=['PUT'])
 def update_stock(item_id):
     try:
         data = request.get_json()
@@ -69,7 +74,7 @@ def update_stock(item_id):
         return jsonify({'error': str(e)}), 500
 
 # Delete Stock Item
-@stock_bp.route('/api/stock/<item_id>', methods=['DELETE'])
+@stock_bp.route('/<item_id>', methods=['DELETE'])
 def delete_stock(item_id):
     try:
         result = stock_manager.delete_stock_item(item_id)
@@ -85,7 +90,7 @@ def delete_stock(item_id):
         return jsonify({'error': str(e)}), 500
     
     # Create Sale
-@sales_bp.route('/api/sales', methods=['POST'])
+@sales_bp.route('/', methods=['POST'])
 def create_sale():
     try:
         data = request.get_json()
@@ -100,7 +105,7 @@ def create_sale():
         return jsonify({'error': str(e)}), 500
 
 # Get All Sales
-@sales_bp.route('/api/sales', methods=['GET'])
+@sales_bp.route('/', methods=['GET'])
 def get_all_sales():
     try:
         result = sales_manager.get_all_sales()
@@ -112,7 +117,7 @@ def get_all_sales():
         return jsonify({'error': str(e)}), 500
 
 # Get Sale by ID
-@sales_bp.route('/api/sales/<sale_id>', methods=['GET'])
+@sales_bp.route('/<sale_id>', methods=['GET'])
 def get_sale_by_id(sale_id):
     try:
         result = sales_manager.get_sale_by_id(sale_id)
@@ -126,7 +131,7 @@ def get_sale_by_id(sale_id):
         return jsonify({'error': str(e)}), 500
 
 # Update Sale
-@sales_bp.route('/api/sales/<sale_id>', methods=['PUT'])
+@sales_bp.route('/<sale_id>', methods=['PUT'])
 def update_sale(sale_id):
     try:
         data = request.get_json()
@@ -141,7 +146,7 @@ def update_sale(sale_id):
         return jsonify({'error': str(e)}), 500
 
 # Delete Sale
-@sales_bp.route('/api/sales/<sale_id>', methods=['DELETE'])
+@sales_bp.route('/<sale_id>', methods=['DELETE'])
 def delete_sale(sale_id):
     try:
         result = sales_manager.delete_sale(sale_id)
@@ -153,3 +158,4 @@ def delete_sale(sale_id):
         return jsonify({'error': str(e)}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+

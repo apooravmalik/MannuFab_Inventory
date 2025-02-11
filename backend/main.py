@@ -4,10 +4,10 @@ from api.api_endpts import stock_bp, sales_bp
 app = Flask(__name__)
 
 # Register the Blueprint for stock routes
-app.register_blueprint(stock_bp)
+app.register_blueprint(stock_bp, url_prefix='/api/stock')
 
 # Register the Blueprint for sales routes
-app.register_blueprint(sales_bp)
+app.register_blueprint(sales_bp, url_prefix='/api/sales')
 
 @app.route('/')
 def home():
