@@ -11,19 +11,31 @@ class SalesManager:
         return True
 
     def create_sale(self, data):
-        """Create a new sale entry."""
+        """Create a new sale entry with stitching reference if required."""
         try:
-            required_fields = ['mode', 'selling_price', 'cost_price', 'item_name', 'cust_name', 'order_date']
-            
+            required_fields = ['item_name', 'cost_price', 'selling_price', 'mode', 'cust_name', 'order_date']
             self.validate_sales_data(data, required_fields)
 
-            # Set default values
-            data['order_date'] = data.get('order_date', datetime.now().isoformat())
-            data['stitching'] = data.get('stitching', False)
-
+            # Insert sale record first
             result = supabase.table('sales').insert(data).execute()
-            return result.data[0]
-            
+            sale_record = result.data[0]
+
+            # Handle stitching reference creation only after successful sale
+            if data.get('stitching', False):
+                stitching_data = {
+                    "item_id": sale_record["item_id"],
+                    "stitching_preference": "TBD",
+                    "tailor_price": 0,
+                    "selling_price": 0,
+                    "item_name": data['item_name'],
+                    "cust_name": data['cust_name'],
+                    "expected_date": data.get('order_date'),
+                    "order_date": data.get('order_date', datetime.now().isoformat())
+                }
+                supabase.table('stitching').insert(stitching_data).execute()
+
+            return sale_record
+
         except Exception as e:
             raise Exception(f"Error creating sale: {str(e)}")
 

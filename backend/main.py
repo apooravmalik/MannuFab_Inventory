@@ -1,5 +1,5 @@
 from flask import Flask
-from api.api_endpts import stock_bp, sales_bp
+from api.api_endpts import stock_bp, sales_bp, stitching_bp, billing_bp
 
 app = Flask(__name__)
 
@@ -8,6 +8,12 @@ app.register_blueprint(stock_bp, url_prefix='/api/stock')
 
 # Register the Blueprint for sales routes
 app.register_blueprint(sales_bp, url_prefix='/api/sales')
+
+# Register the Blueprint for stitching routes
+app.register_blueprint(stitching_bp, url_prefix='/api/stitching')
+
+# Register the Blueprint for stitching routes
+app.register_blueprint(billing_bp, url_prefix='/api/billing')
 
 @app.route('/')
 def home():
