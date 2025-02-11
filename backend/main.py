@@ -1,10 +1,13 @@
 from flask import Flask
-from api.api_endpts import stock_bp
+from api.api_endpts import stock_bp, sales_bp
 
 app = Flask(__name__)
 
 # Register the Blueprint for stock routes
 app.register_blueprint(stock_bp)
+
+# Register the Blueprint for sales routes
+app.register_blueprint(sales_bp)
 
 @app.route('/')
 def home():

@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify
 from services.stock import StockManager
+from services.sales import SalesManager
 
 # Create Blueprint
 stock_bp = Blueprint('stock', __name__)
+sales_bp = Blueprint('sales', __name__)
 stock_manager = StockManager()
+sales_manager = SalesManager()
 
 # Create Stock Item
 @stock_bp.route('/api/stock', methods=['POST'])
@@ -76,6 +79,76 @@ def delete_stock(item_id):
             'data': result
         }), 200
         
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    # Create Sale
+@sales_bp.route('/api/sales', methods=['POST'])
+def create_sale():
+    try:
+        data = request.get_json()
+        result = sales_manager.create_sale(data)
+        return jsonify({
+            'message': 'Sale created successfully',
+            'data': result
+        }), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Get All Sales
+@sales_bp.route('/api/sales', methods=['GET'])
+def get_all_sales():
+    try:
+        result = sales_manager.get_all_sales()
+        return jsonify({
+            'message': 'Sales records retrieved successfully',
+            'data': result
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Get Sale by ID
+@sales_bp.route('/api/sales/<sale_id>', methods=['GET'])
+def get_sale_by_id(sale_id):
+    try:
+        result = sales_manager.get_sale_by_id(sale_id)
+        return jsonify({
+            'message': 'Sale record retrieved successfully',
+            'data': result
+        }), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Update Sale
+@sales_bp.route('/api/sales/<sale_id>', methods=['PUT'])
+def update_sale(sale_id):
+    try:
+        data = request.get_json()
+        result = sales_manager.update_sale(sale_id, data)
+        return jsonify({
+            'message': 'Sale record updated successfully',
+            'data': result
+        }), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Delete Sale
+@sales_bp.route('/api/sales/<sale_id>', methods=['DELETE'])
+def delete_sale(sale_id):
+    try:
+        result = sales_manager.delete_sale(sale_id)
+        return jsonify({
+            'message': 'Sale record deleted successfully',
+            'data': result
+        }), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
     except Exception as e:
