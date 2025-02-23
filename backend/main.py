@@ -1,7 +1,10 @@
 from flask import Flask
-from api.api_endpts import stock_bp, sales_bp, stitching_bp, billing_bp
+from api.api_endpts import stock_bp, sales_bp, stitching_bp, billing_bp, home_bp, auth_bp
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
 # Register the Blueprint for stock routes
 app.register_blueprint(stock_bp, url_prefix='/api/stock')
@@ -14,6 +17,12 @@ app.register_blueprint(stitching_bp, url_prefix='/api/stitching')
 
 # Register the Blueprint for stitching routes
 app.register_blueprint(billing_bp, url_prefix='/api/billing')
+
+# Register the Blueprint for anaylytics routes
+app.register_blueprint(home_bp, url_prefix='/api/analytics')
+
+# Register the Blueprint for authentication routes
+app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
 @app.route('/')
 def home():

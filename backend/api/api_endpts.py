@@ -1,20 +1,26 @@
 from flask import Blueprint, request, jsonify
+from config import supabase
 from services.stock import StockManager
 from services.sales import SalesManager
 from services.stitching import StitchingManager
 from services.billing import BillingManager
+from services.home import HomeAnalytics
+from flask_cors import cross_origin
 
 # Create Blueprint
 stock_bp = Blueprint('stock', __name__)
 sales_bp = Blueprint('sales', __name__)
 stitching_bp = Blueprint('stitching', __name__)
 billing_bp = Blueprint('billing', __name__)
+home_bp = Blueprint('home', __name__)
+auth_bp = Blueprint('auth', __name__)
 
 # Initialize Services
 stock_manager = StockManager()
 sales_manager = SalesManager()
 stitching_manager = StitchingManager()
 billing_manager = BillingManager()
+home_analytics = HomeAnalytics()
 
 """ 
     ALL THESE API ENDPOINTS DONT REQUIRE BASE URL ------- THEY JUST REQUIRE PARAMETERS ,i.e ID
@@ -296,3 +302,83 @@ def delete_bill(bill_id):
         return jsonify({'error': str(e)}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+# Home Analytics APIs
+
+# Get Pending Orders
+@home_bp.route('/pending-orders', methods=['GET'])
+def get_pending_orders():
+    try:
+        result = home_analytics.get_pending_orders()
+        return jsonify({
+            'message': 'Pending orders retrieved successfully',
+            'data': result
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Get Summary Metrics
+@home_bp.route('/summary', methods=['GET'])
+def get_summary_metrics():
+    try:
+        result = home_analytics.get_summary_metrics()
+        return jsonify({
+            'message': 'Summary metrics retrieved successfully',
+            'data': result
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Get Monthly Sales Data
+@home_bp.route('/monthly-sales', methods=['GET'])
+def get_monthly_sales():
+    try:
+        result = home_analytics.get_monthly_sales()
+        return jsonify({
+            'message': 'Monthly sales data retrieved successfully',
+            'data': result
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
+# login 
+
+@auth_bp.route('/login', methods=['OPTIONS'])
+@cross_origin(origin="http://localhost:5173", supports_credentials=True)
+def handle_options():
+    return '', 204  # Return 204 No Content (Preflight Passed)
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    """Authenticate user with Supabase."""
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return jsonify({"error": "Email and password are required"}), 400
+
+        # Authenticate using Supabase
+        response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+
+        # Use dot notation to access attributes
+        if response.user is None:
+            return jsonify({"error": "Invalid credentials"}), 401
+
+        return jsonify({
+            "message": "Login successful",
+            "session": {
+                "access_token": response.session.access_token,
+                "refresh_token": response.session.refresh_token
+            },
+            "user": {
+                "id": response.user.id,
+                "email": response.user.email
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
