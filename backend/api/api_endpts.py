@@ -103,8 +103,15 @@ def delete_stock(item_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
+# Sales Endpoints    
+@sales_bp.route('/', methods=['OPTIONS'])
+@cross_origin(origin="http://localhost:5173", supports_credentials=True)
+def handle_sales_options():
+    return '', 204  # Return 204 No Content (Preflight Passed)
+    
     # Create Sale
-@sales_bp.route('/', methods=['POST'])
+@sales_bp.route('', methods=['POST'])
 def create_sale():
     try:
         data = request.get_json()
@@ -119,7 +126,7 @@ def create_sale():
         return jsonify({'error': str(e)}), 500
 
 # Get All Sales
-@sales_bp.route('/', methods=['GET'])
+@sales_bp.route('', methods=['GET'])
 def get_all_sales():
     try:
         result = sales_manager.get_all_sales()
@@ -145,22 +152,37 @@ def get_sale_by_id(sale_id):
         return jsonify({'error': str(e)}), 500
 
 # Update Sale
-@sales_bp.route('/<sale_id>', methods=['PUT'])
+@sales_bp.route('<sale_id>', methods=['PUT'])
 def update_sale(sale_id):
     try:
+        print(f"Updating sale with ID: {sale_id} (type: {type(sale_id)})")
         data = request.get_json()
-        result = sales_manager.update_sale(sale_id, data)
+        print(f"Data received: {data}")
+        
+        # Try converting the ID to an integer if needed
+        # Some databases require numeric IDs
+        try:
+            numeric_id = int(sale_id)
+            result = sales_manager.update_sale(numeric_id, data)
+        except ValueError:
+            # If conversion fails, use the original ID
+            result = sales_manager.update_sale(sale_id, data)
+            
         return jsonify({
             'message': 'Sale record updated successfully',
             'data': result
         }), 200
     except ValueError as e:
+        print(f"ValueError: {str(e)}")
         return jsonify({'error': str(e)}), 404
     except Exception as e:
+        print(f"Exception: {str(e)}")
+        import traceback
+        traceback.print_exc()  # Print full stack trace
         return jsonify({'error': str(e)}), 500
 
 # Delete Sale
-@sales_bp.route('/<sale_id>', methods=['DELETE'])
+@sales_bp.route('<sale_id>', methods=['DELETE'])
 def delete_sale(sale_id):
     try:
         result = sales_manager.delete_sale(sale_id)

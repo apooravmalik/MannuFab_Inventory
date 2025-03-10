@@ -62,13 +62,22 @@ class SalesManager:
         try:
             # Verify item exists
             existing_sale = self.get_sale_by_id(sale_id)
-
-            result = supabase.table('sales').update(data).eq('item_id', sale_id).execute()
+            
+            # Remove generated columns that can't be updated directly
+            update_data = {k: v for k, v in data.items() if k not in ['item_id', 'margin']}
+            if 'expected_date' in update_data and update_data['expected_date'] == '':
+                update_data['expected_date'] = None  # This will be translated to SQL NULL
+            
+            result = supabase.table('sales').update(update_data).eq('item_id', sale_id).execute()
+            
+            if not result.data or len(result.data) == 0:
+                raise ValueError(f"No data returned when updating sale with ID {sale_id}")
+                
             return result.data[0]
         
         except Exception as e:
             raise Exception(f"Error updating sale record: {str(e)}")
-
+        
     def delete_sale(self, sale_id):
         """Delete a sale record."""
         try:

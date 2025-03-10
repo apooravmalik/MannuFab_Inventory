@@ -26,3 +26,6 @@ dist-ssr
 
 #python packages
 __pycache__
+
+
+.env

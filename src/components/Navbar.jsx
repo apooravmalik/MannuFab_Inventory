@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import MannuFabLogo from "../assets/Mannu_Fab_Logo.jpeg";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,10 +36,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav ref={navbarRef} className="bg-white shadow-md p-4">
+    <nav ref={navbarRef} className="bg-white shadow-md p-4 rounded-b-sm">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-xl font-bold text-[#f73408]">
-          <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
+          <img src={MannuFabLogo} alt="Logo" className="h-10 w-auto" />
         </div>
 
         <div className="hidden md:flex space-x-6">

@@ -4,7 +4,11 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {
+    "origins": "http://localhost:5173",
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"]
+}}, supports_credentials=True)
 
 # Register the Blueprint for stock routes
 app.register_blueprint(stock_bp, url_prefix='/api/stock')
