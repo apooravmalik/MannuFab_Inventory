@@ -138,7 +138,7 @@ def get_all_sales():
         return jsonify({'error': str(e)}), 500
 
 # Get Sale by ID
-@sales_bp.route('/<sale_id>', methods=['GET'])
+@sales_bp.route('<sale_id>', methods=['GET'])
 def get_sale_by_id(sale_id):
     try:
         result = sales_manager.get_sale_by_id(sale_id)
@@ -198,8 +198,12 @@ def delete_sale(sale_id):
 
 # Stitching APIs
 
+@stitching_bp.route('/', methods=['OPTIONS'])
+def handle_stitching_options():
+    return '', 204  # Return 204 No Content (Preflight Passed
+
 # Create Stitching Record
-@stitching_bp.route('/', methods=['POST'])
+@stitching_bp.route('', methods=['POST'])
 def create_stitching():
     try:
         data = request.get_json()
@@ -226,7 +230,7 @@ def get_all_stitching():
         return jsonify({'error': str(e)}), 500
 
 # Get Stitching Record by ID
-@stitching_bp.route('/<stitching_id>', methods=['GET'])
+@stitching_bp.route('<stitching_id>', methods=['GET'])
 def get_stitching_by_id(stitching_id):
     try:
         result = stitching_manager.get_stitching_record_by_id(stitching_id)
@@ -240,7 +244,7 @@ def get_stitching_by_id(stitching_id):
         return jsonify({'error': str(e)}), 500
 
 # Update Stitching Record
-@stitching_bp.route('/<stitching_id>', methods=['PUT'])
+@stitching_bp.route('<stitching_id>', methods=['PUT'])
 def update_stitching(stitching_id):
     try:
         data = request.get_json()
@@ -255,7 +259,7 @@ def update_stitching(stitching_id):
         return jsonify({'error': str(e)}), 500
 
 # Delete Stitching Record
-@stitching_bp.route('/<stitching_id>', methods=['DELETE'])
+@stitching_bp.route('<stitching_id>', methods=['DELETE'])
 def delete_stitching(stitching_id):
     try:
         result = stitching_manager.delete_stitching_record(stitching_id)

@@ -297,7 +297,9 @@ const SalesPage = () => {
       </div>
 
       {loading ? (
-        <p>Loading sales data...</p>
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500" />
+        </div>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
